@@ -1,0 +1,3 @@
+[submodule "sox_ng"]
+	path = sox_ng
+	url = https://codeberg.org/sox_ng/sox_ng.git
