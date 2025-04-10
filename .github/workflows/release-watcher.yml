@@ -99,7 +99,7 @@ jobs:
 
       - name: Build and push Docker images
         if: steps.poll.outputs.new_release == 'true'
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: true
