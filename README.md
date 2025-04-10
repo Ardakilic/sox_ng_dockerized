@@ -30,15 +30,52 @@ You can pull the prebuilt `sox_ng` images from:
 
 - **GitHub Container Registry (GHCR):**
   ```bash
-  docker pull ghcr.io/YOUR_GITHUB_USERNAME/sox_ng:<version>
+  docker pull ghcr.io/Ardakilic/sox_ng:<version>
   ```
 
 - **Docker Hub:**
   ```bash
-  docker pull yourdockerhubuser/sox_ng:<version>
+  docker pull Ardakilic/sox_ng:<version>
   ```
 
 > Replace `<version>` with a release tag like `sox_ng-0.1.0`.
+
+---
+
+## 🔨 Building the Image Manually
+
+You can build the Docker image manually using the included Dockerfile:
+
+1. **Clone this repository:**
+   ```bash
+   git clone https://github.com/Ardakilic/sox_ng-docker.git
+   cd sox_ng-docker
+   ```
+
+2. **Download and extract the sox_ng release:**
+   ```bash
+   # For a specific version (replace X.Y.Z with version number)
+   curl -L https://codeberg.org/sox_ng/sox_ng/archive/sox_ng-X.Y.Z.tar.gz | tar xz --strip-components=1 -C sox_ng/
+   
+   # OR for the latest release
+   curl -s https://codeberg.org/api/v1/repos/sox_ng/sox_ng/releases/latest | \
+     grep "browser_download_url.*tar.gz" | cut -d '"' -f 4 | \
+     xargs curl -L | tar xz --strip-components=1 -C sox_ng/
+   ```
+
+3. **Build the Docker image:**
+   ```bash
+   docker build -t sox_ng:local .
+   ```
+
+4. **Run sox_ng from your new container:**
+   ```bash
+   # Test that it works
+   docker run --rm sox_ng:local --version
+   
+   # Process audio files (mount current directory to /audio in container)
+   docker run --rm -v "$(pwd)":/audio sox_ng:local input.wav output.mp3
+   ```
 
 ---
 
@@ -58,13 +95,27 @@ You can pull the prebuilt `sox_ng` images from:
 
 ```
 .
-├── Dockerfile                # Builds from source in sox_ng/
+├── Dockerfile                # Multi-stage build that compiles and packages sox_ng
 ├── sox_ng/                   # Source from the latest Codeberg release (extracted)
 ├── .last_seen_release        # Internal file to track latest processed release
 └── .github/
     └── workflows/
         └── release-watcher.yml   # The automation workflow
 ```
+
+---
+
+## 🐳 Dockerfile Details
+
+The Dockerfile uses a multi-stage build process:
+- **Stage 1 (Builder)**: Installs all necessary build dependencies and compiles sox_ng
+- **Stage 2 (Final)**: Contains only runtime dependencies for minimal image size
+
+Key features:
+- Based on debian:bookworm-slim for stability and small size
+- Includes FFmpeg support for additional audio format compatibility
+- Properly separates build dependencies from runtime dependencies
+- Uses ENTRYPOINT to make the container behave like the sox_ng command
 
 ---
 
