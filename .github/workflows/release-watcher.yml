@@ -1,0 +1,109 @@
+name: Build and Push sox_ng
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+# Add permissions needed for GHCR
+permissions:
+  contents: write    # Needed to update submodule and .last_seen_release
+  packages: write    # Needed for GHCR
+
+jobs:
+  check-build-push:
+    runs-on: ubuntu-latest
+    env:
+      GHCR_REPO: ghcr.io/${{ github.repository }}
+      DOCKERHUB_REPO: ${{ secrets.DOCKERHUB_USERNAME }}/sox_ng
+    steps:
+      - name: Checkout with submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check latest Codeberg release
+        id: poll
+        run: |
+          API="https://codeberg.org/api/v1/repos/sox_ng/sox_ng/releases"
+          RELEASE_INFO=$(curl -s $API)
+          
+          if [ -z "$RELEASE_INFO" ] || [ "$RELEASE_INFO" == "[]" ]; then
+            echo "Error: Failed to fetch release info or no releases found"
+            exit 1
+          fi
+          
+          TAG=$(echo "$RELEASE_INFO" | jq -r '.[0].tag_name')
+          echo "Latest release tag: $TAG"
+
+          echo "release_tag=$TAG" >> $GITHUB_OUTPUT
+
+          if [ -f .last_seen_release ]; then
+            LAST=$(cat .last_seen_release)
+          else
+            LAST=""
+          fi
+
+          if [ "$TAG" != "$LAST" ]; then
+            echo "✅ New release detected!"
+            echo "$TAG" > .last_seen_release
+            echo "new_release=true" >> $GITHUB_OUTPUT
+          else
+            echo "No new release."
+            echo "new_release=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update submodule to latest release
+        if: steps.poll.outputs.new_release == 'true'
+        run: |
+          cd sox_ng
+          git fetch --all --tags
+          git checkout ${{ steps.poll.outputs.release_tag }}
+          cd ..
+          git add sox_ng
+
+      - name: Save changes to repository
+        if: steps.poll.outputs.new_release == 'true'
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@users.noreply.github.com"
+          git add .last_seen_release
+          git commit -m "Update sox_ng submodule to ${{ steps.poll.outputs.release_tag }}"
+          git push
+
+      # Add QEMU for multi-architecture builds
+      - name: Set up QEMU
+        if: steps.poll.outputs.new_release == 'true'
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        if: steps.poll.outputs.new_release == 'true'
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        if: steps.poll.outputs.new_release == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+    
+      # TODO
+      # - name: Log in to Docker Hub
+      #  if:steps.poll.outputs.new_release == 'true'
+      #  uses: docker/login-action@v3
+      #  with:
+      #    username: ${{ secrets.DOCKERHUB_USERNAME }}
+      #    password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker images
+        if: steps.poll.outputs.new_release == 'true'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64,linux/arm64,linux/arm/v7  # Multiple platforms
+          tags: |
+            ${{ env.GHCR_REPO }}:${{ steps.poll.outputs.release_tag }}
+        # ${{ env.DOCKERHUB_REPO }}:${{ steps.poll.outputs.release_tag }}

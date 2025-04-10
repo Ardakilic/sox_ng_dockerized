@@ -48,19 +48,16 @@ You can build the Docker image manually using the included Dockerfile:
 
 1. **Clone this repository:**
    ```bash
-   git clone https://github.com/Ardakilic/sox_ng-docker.git
-   cd sox_ng-docker
+   git clone https://github.com/Ardakilic/sox_ng_dockerized.git
+   cd sox_ng_dockerized
    ```
 
 2. **Download and extract the sox_ng release:**
    ```bash
    # For a specific version (replace X.Y.Z with version number)
-   curl -L https://codeberg.org/sox_ng/sox_ng/archive/sox_ng-X.Y.Z.tar.gz | tar xz --strip-components=1 -C sox_ng/
-   
-   # OR for the latest release
-   curl -s https://codeberg.org/api/v1/repos/sox_ng/sox_ng/releases/latest | \
-     grep "browser_download_url.*tar.gz" | cut -d '"' -f 4 | \
-     xargs curl -L | tar xz --strip-components=1 -C sox_ng/
+   cd sox_ng
+   git fetch
+   git checkout sox_ng-X.Y.Z
    ```
 
 3. **Build the Docker image:**
