@@ -97,6 +97,14 @@ jobs:
       #    username: ${{ secrets.DOCKERHUB_USERNAME }}
       #    password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      # My username, Ardakilic has a capital "A"
+      # This is needed to set the lowercase owner name for the image, enforced by Docker
+      - name: Set lowercase owner name
+        run: |
+          echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
+        env:
+          OWNER: '${{ github.repository_owner }}'
+
       - name: Build and push Docker images
         if: steps.poll.outputs.new_release == 'true'
         uses: docker/build-push-action@v6
