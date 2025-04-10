@@ -42,7 +42,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /source
 
 # Copy the local sox_ng source code
-COPY . .
+COPY sox_ng .
 
 # Build sox_ng
 RUN autoreconf -i \
