@@ -105,6 +105,7 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           tags: |
             ghcr.io/${{ env.OWNER_LC }}/${{ github.event.repository.name }}:${{ steps.poll.outputs.release_tag }}
+            ghcr.io/${{ env.OWNER_LC }}/${{ github.event.repository.name }}:latest
           # ${{ env.DOCKERHUB_REPO }}:${{ steps.poll.outputs.release_tag }}
 
       # This should be the last step, in case docker build and push fails this should not run
