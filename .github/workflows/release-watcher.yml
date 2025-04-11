@@ -61,16 +61,6 @@ jobs:
           git fetch --all --tags
           git checkout ${{ steps.poll.outputs.release_tag }}
           cd ..
-          git add sox_ng
-
-      - name: Save changes to repository
-        if: steps.poll.outputs.new_release == 'true'
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@users.noreply.github.com"
-          git add .last_seen_release
-          git commit -m "Update sox_ng submodule to ${{ steps.poll.outputs.release_tag }}"
-          git push
 
       # Add QEMU for multi-architecture builds
       - name: Set up QEMU
@@ -100,6 +90,7 @@ jobs:
       # My username, Ardakilic has a capital "A"
       # This is needed to set the lowercase owner name for the image, enforced by Docker
       - name: Set lowercase owner name
+        if: steps.poll.outputs.new_release == 'true'
         run: |
           echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
         env:
@@ -115,3 +106,13 @@ jobs:
           tags: |
             ${{ env.GHCR_REPO }}:${{ steps.poll.outputs.release_tag }}
         # ${{ env.DOCKERHUB_REPO }}:${{ steps.poll.outputs.release_tag }}
+
+      # This should be the last step, in case docker build and push fails this should not run
+      - name: Save changes to repository
+        if: steps.poll.outputs.new_release == 'true'
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@users.noreply.github.com"
+          git add .last_seen_release sox_ng
+          git commit -m "Update sox_ng submodule to ${{ steps.poll.outputs.release_tag }}"
+          git push
