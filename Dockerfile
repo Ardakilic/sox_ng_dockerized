@@ -1,3 +1,5 @@
+ARG IMAGE_NAME=sox_ng
+
 # Stage 1: Build environment
 FROM debian:bookworm-slim AS builder
 
