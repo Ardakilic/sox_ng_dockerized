@@ -4,6 +4,7 @@ FROM debian:bookworm-slim AS builder
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
     autoconf \
+    autoconf-archive \
     automake \
     gcc \
     libtool \
