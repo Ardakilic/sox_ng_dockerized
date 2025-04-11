@@ -24,21 +24,24 @@ This GitHub repository:
 
 ---
 
-## 🚀 Docker Images
+## 🐳 Docker Images
 
 You can pull the prebuilt `sox_ng` images from:
 
 - **GitHub Container Registry (GHCR):**
   ```bash
-  docker pull ghcr.io/Ardakilic/sox_ng:<version>
+  docker pull ghcr.io/ardakilic/sox_ng:latest
   ```
 
 - **Docker Hub:**
   ```bash
-  docker pull Ardakilic/sox_ng:<version>
+  docker pull ardakilic/sox_ng:latest
   ```
 
-> Replace `<version>` with a release tag like `sox_ng-0.1.0`.
+## 🚀 Example Usage
+```bash
+docker run --rm -v "$(pwd)":/audio ardakilic/sox_ng:latest input.wav output.mp3
+```
 
 ---
 
@@ -48,16 +51,16 @@ You can build the Docker image manually using the included Dockerfile:
 
 1. **Clone this repository:**
    ```bash
-   git clone https://github.com/Ardakilic/sox_ng_dockerized.git
+   git clone --recursive-submodules https://github.com/Ardakilic/sox_ng_dockerized.git
    cd sox_ng_dockerized
    ```
 
-2. **Download and extract the sox_ng release:**
+2. **(Optional) Change the sox_ng release if you don't want the latest release:**
    ```bash
-   # For a specific version (replace X.Y.Z with version number)
    cd sox_ng
    git fetch
    git checkout sox_ng-X.Y.Z
+   cd ..
    ```
 
 3. **Build the Docker image:**
