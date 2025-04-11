@@ -92,7 +92,7 @@ jobs:
       - name: Set lowercase owner name
         if: steps.poll.outputs.new_release == 'true'
         run: |
-          echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
+          echo "OWNER_LC=${OWNER,,}" >> ${GITHUB_ENV}
         env:
           OWNER: '${{ github.repository_owner }}'
 
@@ -104,8 +104,8 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64,linux/arm/v7  # Multiple platforms
           tags: |
-            ${{ env.GHCR_REPO }}:${{ steps.poll.outputs.release_tag }}
-        # ${{ env.DOCKERHUB_REPO }}:${{ steps.poll.outputs.release_tag }}
+            ghcr.io/${{ env.OWNER_LC }}/${{ github.event.repository.name }}:${{ steps.poll.outputs.release_tag }}
+          # ${{ env.DOCKERHUB_REPO }}:${{ steps.poll.outputs.release_tag }}
 
       # This should be the last step, in case docker build and push fails this should not run
       - name: Save changes to repository
