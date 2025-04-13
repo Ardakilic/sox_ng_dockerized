@@ -54,7 +54,12 @@ RUN autoreconf -i \
 # Stage 2: Final image
 FROM debian:bookworm-slim
 
-LABEL org.opencontainers.image.authors="ardakilicdagi@gmail.com"
+LABEL org.opencontainers.image.authors="Arda Kilicdagi <arda@kilicdagi.com>" \
+      org.opencontainers.image.url="https://github.com/ardakilic/sox_ng_dockerized" \
+      org.opencontainers.image.documentation="https://github.com/ardakilic/sox_ng_dockerized" \
+      org.opencontainers.image.source="https://codeberg.org/sox_ng/sox_ng" \
+      org.opencontainers.image.title="sox_ng" \
+      org.opencontainers.image.description="SoX_ng, the hard fork of SoX, the Swiss Army knife of audio processing"
 
 # Install runtime dependencies only
 RUN apt-get update && apt-get install -y \

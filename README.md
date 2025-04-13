@@ -38,9 +38,21 @@ You can pull the prebuilt `sox_ng` images from:
   docker pull ardakilic/sox_ng:latest
   ```
 
-## 🚀 Example Usage
+## 🚀 Example Usages
 ```bash
+# Simplest usage
 docker run --rm -v "$(pwd)":/audio ardakilic/sox_ng:latest input.wav output.mp3
+```
+
+```bash
+# Or a more complicated example:
+# Downsample a HiFi FLAC file to 16 bit 48kHz, multi-threaded
+docker run --rm -v "$(pwd)":/audio ardakilic/sox_ng:latest HiFi.flac -b 16 LoFi.flac rate -v -L 48000 dither --multi-threaded
+```
+
+```bash
+# Or if you want to use GHCR instead:
+docker run --rm -v "$(pwd)":/audio ghcr.io/ardakilic/sox_ng:latest input.wav output.mp3
 ```
 
 ---
@@ -81,10 +93,10 @@ You can build the Docker image manually using the included Dockerfile:
 
 ## 🧠 How it works
 
-- The GitHub Action runs every 30 minutes (`cron: */30 * * * *`).
+- The GitHub Action runs every hour (`cron: 0 * * * *`).
 - It uses the Codeberg API to fetch the latest release info.
 - If a **new release is found**, the workflow:
-  - Downloads and extracts the tarball,
+  - Checks out the newly found tag from the submodule source repository,
   - Builds the Docker image with only local files (no runtime downloading in Dockerfile),
   - Tags the image with the release version,
   - Pushes to both GHCR and Docker Hub.
@@ -132,15 +144,14 @@ Make sure to set the following GitHub Action secrets:
 
 ## 🧪 Manual Trigger
 
-You can also manually trigger the workflow from the **Actions** tab on GitHub to force a rebuild.
+If you forked the repository, you can also manually trigger the workflow from the **Actions** tab on GitHub to force a rebuild.
 
 ---
 
 ## 🤝 Contributing
 
 PRs welcome if you'd like to:
-- Add multi-arch support,
-- Add version tagging like `:latest` or `:stable`,
+- Add multi-arch support for another architecture (already supported x64, arm64, arm/v7),
 - Improve the caching or reduce image size.
 
 ---
