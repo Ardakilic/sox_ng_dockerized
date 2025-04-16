@@ -1,8 +1,8 @@
-name: Build and Push sox_ng
+name: Check for new sox_ng release, and build and push if any
 
 on:
   schedule:
-    - cron: '0 * * * *'
+    - cron: '0 */4 * * *'
   workflow_dispatch:
 
 # Add permissions needed for GHCR
