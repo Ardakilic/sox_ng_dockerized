@@ -93,7 +93,7 @@ You can build the Docker image manually using the included Dockerfile:
 
 ## 🧠 How it works
 
-- The GitHub Action runs every 4 hours (`cron: 0 */4 * * *`).
+- The GitHub Action runs every 12 hours (`cron: 0 */12 * * *`).
 - It uses the Codeberg API to fetch the latest release info.
 - If a **new release is found**, the workflow:
   - Checks out the newly found tag from the submodule source repository,

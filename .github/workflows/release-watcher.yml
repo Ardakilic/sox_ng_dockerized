@@ -2,7 +2,7 @@ name: Check for new sox_ng release, and build and push if any
 
 on:
   schedule:
-    - cron: '0 */4 * * *'
+    - cron: '0 */12 * * *'
   workflow_dispatch:
 
 # Add permissions needed for GHCR
@@ -31,6 +31,14 @@ jobs:
           if [ -z "$RELEASE_INFO" ] || [ "$RELEASE_INFO" == "[]" ]; then
             echo "Error: Failed to fetch release info or no releases found"
             exit 1
+          fi
+          
+          # Check if the latest release is a prerelease
+          IS_PRERELEASE=$(echo "$RELEASE_INFO" | jq -r '.[0].prerelease')
+          if [ "$IS_PRERELEASE" = "true" ]; then
+            echo "🛑 Latest release is a prerelease, skipping"
+            echo "new_release=false" >> $GITHUB_OUTPUT
+            exit 0
           fi
           
           TAG=$(echo "$RELEASE_INFO" | jq -r '.[0].tag_name')
