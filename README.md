@@ -55,6 +55,11 @@ docker run --rm -v "$(pwd)":/audio ardakilic/sox_ng:latest HiFi.flac -b 16 LoFi.
 docker run --rm -v "$(pwd)":/audio ghcr.io/ardakilic/sox_ng:latest input.wav output.mp3
 ```
 
+```bash
+# Get file information
+docker run --rm -v "$(pwd)":/audio ardakilic/sox_ng:latest --i HiFi.flac
+```
+
 ---
 
 ## 🔨 Building the Image Manually
