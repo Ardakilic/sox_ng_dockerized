@@ -1,7 +1,7 @@
 # sox_ng Docker Builder
 
 🛠️ **Automated Docker image builder for [`sox_ng`](https://codeberg.org/sox_ng/sox_ng) releases from Codeberg**  
-📦 **Publishes images to [GitHub Container Registry (GHCR)](https://ghcr.io) and [Docker Hub](https://hub.docker.com)**
+📦 **Publishes images to [GitHub Container Registry (GHCR)](https://github.com/Ardakilic/sox_ng_dockerized/pkgs/container/sox_ng) and [Docker Hub](https://hub.docker.com/r/ardakilic/sox_ng)**
 
 ---
 
@@ -32,6 +32,8 @@ You can pull the prebuilt `sox_ng` images from:
   ```bash
   docker pull ghcr.io/ardakilic/sox_ng:latest
   ```
+
+or via
 
 - **Docker Hub:**
   ```bash
