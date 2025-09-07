@@ -62,6 +62,47 @@ docker run --rm -v "$(pwd)":/audio ghcr.io/ardakilic/sox_ng:latest input.wav out
 docker run --rm -v "$(pwd)":/audio ardakilic/sox_ng:latest --i HiFi.flac
 ```
 
+## FFmpeg Examples
+
+FFmpeg is also included in the image in addition to the native codec packages, to provide enhanced support for a wide range of audio and video formats, complementing sox_ng's capabilities. You can use it by overriding the entrypoint:
+
+```bash
+# Simple audio conversion
+docker run --rm --entrypoint ffmpeg -v "$(pwd)":/audio ardakilic/sox_ng:latest -i input.wav output.mp3
+```
+
+```bash
+# More complex: Convert video to audio with specific settings
+docker run --rm --entrypoint ffmpeg -v "$(pwd)":/audio ardakilic/sox_ng:latest -i input.mp4 -vn -acodec libmp3lame -ab 192k output.mp3
+```
+
+```bash
+# Using GHCR
+docker run --rm --entrypoint ffmpeg -v "$(pwd)":/audio ghcr.io/ardakilic/sox_ng:latest -i input.wav output.mp3
+```
+
+```bash
+# Get media info (using ffprobe, part of FFmpeg)
+docker run --rm --entrypoint ffprobe -v "$(pwd)":/audio ardakilic/sox_ng:latest input.wav
+```
+
+```bash
+# Persistent container with docker exec
+# First, run the container in detached mode
+docker run -d --name sox_container -v "$(pwd)":/audio ardakilic/sox_ng:latest sleep infinity
+
+# Then, exec into it to run ffmpeg
+docker exec sox_container ffmpeg -i input.wav output.mp3
+
+# Stop the container when done
+docker stop sox_container
+docker rm sox_container
+```
+
+```bash
+# Using ffprobe with docker exec
+docker exec sox_container ffprobe input.wav
+```
 ---
 
 ## 🔨 Building the Image Manually
