@@ -1,5 +1,5 @@
 # Stage 1: Build environment
-FROM debian:bookworm-slim AS builder
+FROM debian:trixie-slim AS builder
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y \
     ladspa-sdk \
     libao-dev \
     libasound2-dev \
+    libfftw3-dev \
     libflac-dev \
     libgsm1-dev \
     libid3tag0-dev \
@@ -52,7 +53,7 @@ RUN autoreconf -i \
     && make install DESTDIR=/install
 
 # Stage 2: Final image
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 LABEL org.opencontainers.image.authors="Arda Kilicdagi <arda@kilicdagi.com>" \
       org.opencontainers.image.url="https://github.com/ardakilic/sox_ng_dockerized" \
@@ -66,6 +67,7 @@ RUN apt-get update && apt-get install -y \
     # Runtime versions of codec libraries
     libao4 \
     libasound2 \
+    libfftw3-bin \
     libflac12 \
     libgsm1 \
     libid3tag0 \

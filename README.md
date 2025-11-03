@@ -172,7 +172,7 @@ The Dockerfile uses a multi-stage build process:
 - **Stage 2 (Final)**: Contains only runtime dependencies for minimal image size
 
 Key features:
-- Based on debian:bookworm-slim for stability and small size
+- Based on debian:trixie-slim for stability and small size
 - Includes FFmpeg support for additional audio format compatibility
 - Properly separates build dependencies from runtime dependencies
 - Uses ENTRYPOINT to make the container behave like the sox_ng command
