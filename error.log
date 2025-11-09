@@ -1,0 +1,181 @@
+Run docker/build-push-action@v6
+  
+GitHub Actions runtime token ACs
+Docker info
+Proxy configuration
+Buildx version
+  /usr/bin/docker buildx version
+  github.com/docker/buildx v0.29.1 a32761aeb3debd39be1eca514af3693af0db334b
+Builder info
+/usr/bin/docker buildx build --build-arg IMAGE_NAME=sox_ng --iidfile /home/runner/work/_temp/docker-actions-toolkit-ZgBpE2/build-iidfile-ce35f69d86.txt --platform linux/amd64,linux/arm64,linux/arm/v7 --attest type=provenance,mode=max,builder-id=https://github.com/Ardakilic/sox_ng_dockerized/actions/runs/19215548423/attempts/1 --tag ghcr.io/***/sox_ng:sox_ng-14.6.1.2 --tag ghcr.io/***/sox_ng:latest --tag ***/sox_ng:sox_ng-14.6.1.2 --tag ***/sox_ng:latest --metadata-file /home/runner/work/_temp/docker-actions-toolkit-ZgBpE2/build-metadata-6a12e9684d.json --push .
+#0 building with "builder-70a28bf4-ccca-45b3-a07b-7297938e21bf" instance using docker-container driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.73kB done
+#1 DONE 0.0s
+
+#2 [linux/amd64 internal] load metadata for docker.io/library/debian:trixie-slim
+#2 ...
+
+#3 [auth] library/debian:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#4 [linux/arm64 internal] load metadata for docker.io/library/debian:trixie-slim
+#4 ...
+
+#5 [linux/arm/v7 internal] load metadata for docker.io/library/debian:trixie-slim
+#5 DONE 0.8s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 2B done
+#6 DONE 0.0s
+
+#4 [linux/arm64 internal] load metadata for docker.io/library/debian:trixie-slim
+#4 DONE 0.9s
+
+#2 [linux/amd64 internal] load metadata for docker.io/library/debian:trixie-slim
+#2 DONE 0.9s
+
+#7 [linux/amd64 builder 1/5] FROM docker.io/library/debian:trixie-slim@sha256:a347fd7510ee31a84387619a492ad6c8eb0af2f2682b916ff3e643eb076f925a
+#7 resolve docker.io/library/debian:trixie-slim@sha256:a347fd7510ee31a84387619a492ad6c8eb0af2f2682b916ff3e643eb076f925a done
+#7 ...
+
+#8 [internal] load build context
+#8 transferring context: 4.46MB 0.1s done
+#8 DONE 0.2s
+
+#7 [linux/amd64 builder 1/5] FROM docker.io/library/debian:trixie-slim@sha256:a347fd7510ee31a84387619a492ad6c8eb0af2f2682b916ff3e643eb076f925a
+#7 sha256:d7ecded7702a5dbf6d0f79a71edc34b534d08f3051980e2c948fba72db3197fc 1.05MB / 29.78MB 0.3s
+#7 sha256:d7ecded7702a5dbf6d0f79a71edc34b534d08f3051980e2c948fba72db3197fc 3.15MB / 29.78MB 0.5s
+#7 sha256:d7ecded7702a5dbf6d0f79a71edc34b534d08f3051980e2c948fba72db3197fc 8.39MB / 29.78MB 0.8s
+#7 sha256:d7ecded7702a5dbf6d0f79a71edc34b534d08f3051980e2c948fba72db3197fc 12.58MB / 29.78MB 0.9s
+#7 sha256:d7ecded7702a5dbf6d0f79a71edc34b534d08f3051980e2c948fba72db3197fc 15.73MB / 29.78MB 1.1s
+#7 sha256:d7ecded7702a5dbf6d0f79a71edc34b534d08f3051980e2c948fba72db3197fc 20.97MB / 29.78MB 1.2s
+#7 sha256:d7ecded7702a5dbf6d0f79a71edc34b534d08f3051980e2c948fba72db3197fc 25.17MB / 29.78MB 1.4s
+#7 sha256:d7ecded7702a5dbf6d0f79a71edc34b534d08f3051980e2c948fba72db3197fc 29.36MB / 29.78MB 1.5s
+#7 sha256:d7ecded7702a5dbf6d0f79a71edc34b534d08f3051980e2c948fba72db3197fc 29.78MB / 29.78MB 1.5s done
+#7 extracting sha256:d7ecded7702a5dbf6d0f79a71edc34b534d08f3051980e2c948fba72db3197fc
+#7 ...
+
+#9 [linux/arm64 builder 1/5] FROM docker.io/library/debian:trixie-slim@sha256:a347fd7510ee31a84387619a492ad6c8eb0af2f2682b916ff3e643eb076f925a
+#9 resolve docker.io/library/debian:trixie-slim@sha256:a347fd7510ee31a84387619a492ad6c8eb0af2f2682b916ff3e643eb076f925a done
+#9 sha256:51365f04b68881c6fd3d04aa38cdb689fdee6efba2aa6afcf2da5385022cf475 30.14MB / 30.14MB 0.8s done
+#9 extracting sha256:51365f04b68881c6fd3d04aa38cdb689fdee6efba2aa6afcf2da5385022cf475 1.0s done
+#9 DONE 1.8s
+
+#10 [linux/arm/v7 builder 1/5] FROM docker.io/library/debian:trixie-slim@sha256:a347fd7510ee31a84387619a492ad6c8eb0af2f2682b916ff3e643eb076f925a
+#10 resolve docker.io/library/debian:trixie-slim@sha256:a347fd7510ee31a84387619a492ad6c8eb0af2f2682b916ff3e643eb076f925a done
+#10 sha256:8945aefb71bd942499dd072e2c7c869b6b74b7c4dd83bff59c209b7b95d52a9f 26.21MB / 26.21MB 0.9s done
+#10 extracting sha256:8945aefb71bd942499dd072e2c7c869b6b74b7c4dd83bff59c209b7b95d52a9f 1.0s done
+#10 DONE 1.9s
+
+#11 [linux/arm/v7 stage-1 2/5] RUN apt-get update && apt-get install -y     libao4     libasound2     libfftw3-bin     libflac14     libgsm1     libid3tag0     libltdl7     libmad0     libmagic1     libmp3lame0     libogg0     libopencore-amrnb0     libopencore-amrwb0     libopus0     libopusfile0     libpng16-16     libpulse0     libsamplerate0     libsndfile1     libspeex1     libspeexdsp1     libtwolame0     libvorbis0a     libvorbisenc2     libvorbisfile3     libwavpack1     ffmpeg     && apt-get clean     && rm -rf /var/lib/apt/lists/*
+#11 ...
+
+#7 [linux/amd64 builder 1/5] FROM docker.io/library/debian:trixie-slim@sha256:a347fd7510ee31a84387619a492ad6c8eb0af2f2682b916ff3e643eb076f925a
+#7 extracting sha256:d7ecded7702a5dbf6d0f79a71edc34b534d08f3051980e2c948fba72db3197fc 1.3s done
+#7 DONE 2.9s
+
+#11 [linux/arm/v7 stage-1 2/5] RUN apt-get update && apt-get install -y     libao4     libasound2     libfftw3-bin     libflac14     libgsm1     libid3tag0     libltdl7     libmad0     libmagic1     libmp3lame0     libogg0     libopencore-amrnb0     libopencore-amrwb0     libopus0     libopusfile0     libpng16-16     libpulse0     libsamplerate0     libsndfile1     libspeex1     libspeexdsp1     libtwolame0     libvorbis0a     libvorbisenc2     libvorbisfile3     libwavpack1     ffmpeg     && apt-get clean     && rm -rf /var/lib/apt/lists/*
+#11 1.085 Get:1 http://deb.debian.org/debian trixie InRelease [140 kB]
+#11 1.306 Get:2 http://deb.debian.org/debian trixie-updates InRelease [47.3 kB]
+#11 1.309 Get:3 http://deb.debian.org/debian-security trixie-security InRelease [43.4 kB]
+#11 2.048 Get:4 http://deb.debian.org/debian trixie/main armhf Packages [9237 kB]
+#11 3.017 Get:5 http://deb.debian.org/debian trixie-updates/main armhf Packages [5144 B]
+#11 3.918 Get:6 http://deb.debian.org/debian-security trixie-security/main armhf Packages [66.7 kB]
+#11 ...
+
+#12 [linux/amd64 stage-1 2/5] RUN apt-get update && apt-get install -y     libao4     libasound2     libfftw3-bin     libflac14     libgsm1     libid3tag0     libltdl7     libmad0     libmagic1     libmp3lame0     libogg0     libopencore-amrnb0     libopencore-amrwb0     libopus0     libopusfile0     libpng16-16     libpulse0     libsamplerate0     libsndfile1     libspeex1     libspeexdsp1     libtwolame0     libvorbis0a     libvorbisenc2     libvorbisfile3     libwavpack1     ffmpeg     && apt-get clean     && rm -rf /var/lib/apt/lists/*
+#12 0.395 Get:1 http://deb.debian.org/debian trixie InRelease [140 kB]
+#12 0.443 Get:2 http://deb.debian.org/debian trixie-updates InRelease [47.3 kB]
+#12 0.444 Get:3 http://deb.debian.org/debian-security trixie-security InRelease [43.4 kB]
+#12 0.503 Get:4 http://deb.debian.org/debian trixie/main amd64 Packages [9669 kB]
+#12 0.589 Get:5 http://deb.debian.org/debian trixie-updates/main amd64 Packages [5412 B]
+#12 0.590 Get:6 http://deb.debian.org/debian-security trixie-security/main amd64 Packages [69.3 kB]
+#12 1.878 Fetched 9975 kB in 2s (5879 kB/s)
+#12 1.878 Reading package lists...
+#12 2.940 Reading package lists...
+#12 4.224 Building dependency tree...
+#12 4.649 Reading state information...
+#12 5.196 The following additional packages will be installed:
+#12 5.197   adduser adwaita-icon-theme alsa-topology-conf alsa-ucm-conf at-spi2-common
+#12 5.197   at-spi2-core dbus dbus-bin dbus-daemon dbus-session-bus-common
+#12 5.197   dbus-system-bus-common dbus-user-session dconf-gsettings-backend
+#12 5.197   dconf-service dmsetup fontconfig fontconfig-config fonts-dejavu-core
+#12 5.197   fonts-dejavu-mono gsettings-desktop-schemas gtk-update-icon-cache
+#12 5.198   hicolor-icon-theme i965-va-driver intel-media-va-driver krb5-locales
+#12 5.198   libaacs0 libao-common libaom3 libapparmor1 libasound2-data libass9
+#12 5.198   libasyncns0 libatk-bridge2.0-0t64 libatk1.0-0t64 libatomic1 libatspi2.0-0t64
+#12 5.198   libavahi-client3 libavahi-common-data libavahi-common3 libavc1394-0
+#12 5.198   libavcodec61 libavdevice61 libavfilter10 libavformat61 libavutil59
+#12 5.200   libbdplus0 libblas3 libbluray2 libbrotli1 libbs2b0 libcaca0
+#12 5.200   libcairo-gobject2 libcairo2 libcdio-cdda2t64 libcdio-paranoia2t64
+#12 5.200   libcdio19t64 libchromaprint1 libcjson1 libcloudproviders0 libcodec2-1.2
+#12 5.200   libcolord2 libcom-err2 libcryptsetup12 libcups2t64 libdatrie1 libdav1d7
+#12 5.200   libdbus-1-3 libdc1394-25 libdconf1 libdecor-0-0 libdecor-0-plugin-1-gtk
+#12 5.200   libdeflate0 libdevmapper1.02.1 libdrm-amdgpu1 libdrm-common libdrm-intel1
+#12 5.200   libdrm2 libdvdnav4 libdvdread8t64 libedit2 libelf1t64 libepoxy0 libexpat1
+#12 5.200   libffi8 libfftw3-double3 libfftw3-long3 libfftw3-quad3 libfftw3-single3
+#12 5.200   libflite1 libfontconfig1 libfreetype6 libfribidi0 libgbm1 libgcrypt20
+#12 5.200   libgdk-pixbuf-2.0-0 libgdk-pixbuf2.0-bin libgdk-pixbuf2.0-common
+#12 5.200   libgfortran5 libgl1 libgl1-mesa-dri libglib2.0-0t64 libglib2.0-data
+#12 5.200   libglvnd0 libglx-mesa0 libglx0 libgme0 libgnutls30t64 libgomp1
+#12 5.200   libgpg-error-l10n libgpg-error0 libgpm2 libgraphite2-3 libgssapi-krb5-2
+#13 42.85 Preparing to unpack .../081-libfftw3-single3_3.3.10-2+b1_amd64.deb ...
+#13 42.85 Unpacking libfftw3-single3:amd64 (3.3.10-2+b1) ...
+#13 CANCELED
+------
+ > [linux/arm/v7 stage-1 2/5] RUN apt-get update && apt-get install -y     libao4     libasound2     libfftw3-bin     libflac14     libgsm1     libid3tag0     libltdl7     libmad0     libmagic1     libmp3lame0     libogg0     libopencore-amrnb0     libopencore-amrwb0     libopus0     libopusfile0     libpng16-16     libpulse0     libsamplerate0     libsndfile1     libspeex1     libspeexdsp1     libtwolame0     libvorbis0a     libvorbisenc2     libvorbisfile3     libwavpack1     ffmpeg     && apt-get clean     && rm -rf /var/lib/apt/lists/*:
+42.93 
+42.93 Package libpng16-16 is not available, but is referred to by another package.
+42.93 This may mean that the package is missing, has been obsoleted, or
+42.93 is only available from another source
+42.93 However the following packages replace it:
+42.93   libpng16-16t64
+42.93 
+42.96 E: Package 'libasound2' has no installation candidate
+42.97 E: Package 'libmagic1' has no installation candidate
+42.97 E: Package 'libpng16-16' has no installation candidate
+------
+Dockerfile:66
+--------------------
+  65 |     # Install runtime dependencies only
+  66 | >>> RUN apt-get update && apt-get install -y \
+  67 | >>>     # Runtime versions of codec libraries
+  68 | >>>     libao4 \
+  69 | >>>     libasound2 \
+  70 | >>>     libfftw3-bin \
+  71 | >>>     libflac14 \
+  72 | >>>     libgsm1 \
+  73 | >>>     libid3tag0 \
+  74 | >>>     libltdl7 \
+  75 | >>>     libmad0 \
+  76 | >>>     libmagic1 \
+  77 | >>>     libmp3lame0 \
+  78 | >>>     libogg0 \
+  79 | >>>     libopencore-amrnb0 \
+  80 | >>>     libopencore-amrwb0 \
+  81 | >>>     libopus0 \
+  82 | >>>     libopusfile0 \
+  83 | >>>     libpng16-16 \
+  84 | >>>     libpulse0 \
+  85 | >>>     libsamplerate0 \
+  86 | >>>     libsndfile1 \
+  87 | >>>     libspeex1 \
+  88 | >>>     libspeexdsp1 \
+  89 | >>>     libtwolame0 \
+  90 | >>>     libvorbis0a \
+  91 | >>>     libvorbisenc2 \
+  92 | >>>     libvorbisfile3 \
+  93 | >>>     libwavpack1 \
+  94 | >>>     # FFmpeg for additional format support
+  95 | >>>     ffmpeg \
+  96 | >>>     # Clean up APT cache to reduce image size
+  97 | >>>     && apt-get clean \
+  98 | >>>     && rm -rf /var/lib/apt/lists/*
+  99 |     
+--------------------
+ERROR: failed to build: failed to solve: process "/bin/sh -c apt-get update && apt-get install -y     libao4     libasound2     libfftw3-bin     libflac14     libgsm1     libid3tag0     libltdl7     libmad0     libmagic1     libmp3lame0     libogg0     libopencore-amrnb0     libopencore-amrwb0     libopus0     libopusfile0     libpng16-16     libpulse0     libsamplerate0     libsndfile1     libspeex1     libspeexdsp1     libtwolame0     libvorbis0a     libvorbisenc2     libvorbisfile3     libwavpack1     ffmpeg     && apt-get clean     && rm -rf /var/lib/apt/lists/*" did not complete successfully: exit code: 100
+Reference
+Check build summary support
+Error: buildx failed with: ERROR: failed to build: failed to solve: process "/bin/sh -c apt-get update && apt-get install -y     libao4     libasound2     libfftw3-bin     libflac14     libgsm1     libid3tag0     libltdl7     libmad0     libmagic1     libmp3lame0     libogg0     libopencore-amrnb0     libopencore-amrwb0     libopus0     libopusfile0     libpng16-16     libpulse0     libsamplerate0     libsndfile1     libspeex1     libspeexdsp1     libtwolame0     libvorbis0a     libvorbisenc2     libvorbisfile3     libwavpack1     ffmpeg     && apt-get clean     && rm -rf /var/lib/apt/lists/*" did not complete successfully: exit code: 100

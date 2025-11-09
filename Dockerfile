@@ -66,21 +66,21 @@ LABEL org.opencontainers.image.authors="Arda Kilicdagi <arda@kilicdagi.com>" \
 RUN apt-get update && apt-get install -y \
     # Runtime versions of codec libraries
     libao4 \
-    libasound2 \
+    libasound2t64 \
     libfftw3-bin \
     libflac14 \
     libgsm1 \
     libid3tag0 \
     libltdl7 \
     libmad0 \
-    libmagic1 \
+    libmagic1t64 \
     libmp3lame0 \
     libogg0 \
     libopencore-amrnb0 \
     libopencore-amrwb0 \
     libopus0 \
     libopusfile0 \
-    libpng16-16 \
+    libpng16-16t64 \
     libpulse0 \
     libsamplerate0 \
     libsndfile1 \
