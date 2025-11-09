@@ -68,7 +68,7 @@ RUN apt-get update && apt-get install -y \
     libao4 \
     libasound2 \
     libfftw3-bin \
-    libflac12 \
+    libflac14 \
     libgsm1 \
     libid3tag0 \
     libltdl7 \
