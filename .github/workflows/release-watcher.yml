@@ -72,7 +72,7 @@ jobs:
       # Add QEMU for multi-architecture builds
       - name: Set up QEMU
         if: steps.poll.outputs.new_release == 'true'
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       - name: Set up Docker Buildx
         if: steps.poll.outputs.new_release == 'true'
