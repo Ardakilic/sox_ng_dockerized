@@ -142,12 +142,14 @@ You can build the Docker image manually using the included Dockerfile:
 ## 🧠 How it works
 
 - The GitHub Action runs every 12 hours (`cron: 0 */12 * * *`).
-- It uses the Codeberg API to fetch the latest release info.
-- If a **new release is found**, the workflow:
-  - Checks out the newly found tag from the submodule source repository,
-  - Builds the Docker image with only local files (no runtime downloading in Dockerfile),
-  - Tags the image with the release version,
-  - Pushes to both GHCR and Docker Hub.
+- It fetches **every non-prerelease release** from the Codeberg API and compares against `.built_releases`.
+- For each release **not yet recorded in `.built_releases`**, the workflow (oldest release first):
+  - Checks out that tag in the `sox_ng/` submodule,
+  - Builds the multi-arch Docker image (linux/amd64, arm64, arm/v7) with only local files,
+  - Pushes it to GHCR and Docker Hub tagged with the release version,
+  - Appends the tag to `.built_releases`.
+- The `:latest` floating tag always tracks the **highest semver** across all non-prerelease releases — so a patch on an older branch (e.g. 14.6.x landing after a 14.7.x release) does not demote `:latest`.
+- This guarantees parallel branch releases (e.g. 14.6.x and 14.7.x published the same day) are both built, not just the one newest at poll time.
 
 ---
 
@@ -157,7 +159,7 @@ You can build the Docker image manually using the included Dockerfile:
 .
 ├── Dockerfile                # Multi-stage build that compiles and packages sox_ng
 ├── sox_ng/                   # Source from the latest Codeberg release (extracted)
-├── .last_seen_release        # Internal file to track latest processed release
+├── .built_releases           # Newline-separated list of release tags successfully built and pushed
 └── .github/
     └── workflows/
         └── release-watcher.yml   # The automation workflow

@@ -1,4 +1,4 @@
-name: Check for new sox_ng release, and build and push if any
+name: Check for new sox_ng releases, build and push any unbuilt ones
 
 on:
   schedule:
@@ -7,8 +7,12 @@ on:
 
 # Add permissions needed for GHCR
 permissions:
-  contents: write    # Needed to update submodule and .last_seen_release
+  contents: write    # Needed to update submodule and .built_releases
   packages: write    # Needed for GHCR
+
+concurrency:
+  group: release-watcher
+  cancel-in-progress: false
 
 jobs:
   check-build-push:
@@ -19,67 +23,70 @@ jobs:
       - name: Checkout with submodules
         uses: actions/checkout@v6
         with:
-          submodules: true
+          submodules: recursive
+          fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Check latest Codeberg release
+      - name: Ensure submodule has all tags (handles backfilling older releases)
+        run: |
+          git -C sox_ng fetch --tags --depth=0 \
+            || git -C sox_ng fetch --tags --unshallow \
+            || git -C sox_ng fetch --tags
+
+      - name: Determine unbuilt releases
         id: poll
         run: |
-          API="https://codeberg.org/api/v1/repos/sox_ng/sox_ng/releases"
-          RELEASE_INFO=$(curl -s $API)
-          
-          if [ -z "$RELEASE_INFO" ] || [ "$RELEASE_INFO" == "[]" ]; then
-            echo "Error: Failed to fetch release info or no releases found"
-            exit 1
-          fi
-          
-          # Check if the latest release is a prerelease
-          IS_PRERELEASE=$(echo "$RELEASE_INFO" | jq -r '.[0].prerelease')
-          if [ "$IS_PRERELEASE" = "true" ]; then
-            echo "🛑 Latest release is a prerelease, skipping"
-            echo "new_release=false" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-          
-          TAG=$(echo "$RELEASE_INFO" | jq -r '.[0].tag_name')
-          echo "Latest release tag: $TAG"
+          set -euo pipefail
+          API="https://codeberg.org/api/v1/repos/sox_ng/sox_ng/releases?limit=50&pre-release=false&draft=false"
+          RELEASES=$(curl -fsSL \
+            -H "Accept: application/json" \
+            -H "User-Agent: sox_ng_dockerized-release-watcher" \
+            "$API")
 
-          echo "release_tag=$TAG" >> $GITHUB_OUTPUT
+          touch .built_releases
 
-          if [ -f .last_seen_release ]; then
-            LAST=$(cat .last_seen_release)
-          else
-            LAST=""
-          fi
+          # All non-prerelease tags sorted oldest first.
+          # Defense-in-depth: re-filter client-side in case Forgejo silently
+          # ignores the pre-release query param on older deployments.
+          ALL_TAGS_OLDEST_FIRST=$(echo "$RELEASES" \
+            | jq -r '[.[] | select(.prerelease==false and .draft==false)]
+                     | sort_by(.published_at) | .[].tag_name')
 
-          if [ "$TAG" != "$LAST" ]; then
-            echo "✅ New release detected!"
-            echo "$TAG" > .last_seen_release
-            echo "new_release=true" >> $GITHUB_OUTPUT
-          else
-            echo "No new release."
-            echo "new_release=false" >> $GITHUB_OUTPUT
-          fi
+          # Highest semver across all non-prereleases — determines :latest.
+          LATEST_TAG=$(echo "$ALL_TAGS_OLDEST_FIRST" \
+            | sed 's/^sox_ng-//' | sort -V | tail -n1 | sed 's/^/sox_ng-/')
 
-      - name: Update submodule to latest release
-        if: steps.poll.outputs.new_release == 'true'
-        run: |
-          cd sox_ng
-          git fetch --all --tags
-          git checkout ${{ steps.poll.outputs.release_tag }}
-          cd ..
+          # Diff: upstream tags not yet recorded in .built_releases.
+          # grep -F -x -v -f: fixed-string, full-line, inverted, from file.
+          NEW_TAGS=$(echo "$ALL_TAGS_OLDEST_FIRST" \
+            | grep -F -x -v -f .built_releases || true)
 
-      # Add QEMU for multi-architecture builds
+          {
+            echo "new_tags<<EOF"
+            echo "$NEW_TAGS"
+            echo "EOF"
+            echo "latest_tag=$LATEST_TAG"
+            if [ -n "$NEW_TAGS" ]; then
+              echo "has_new=true"
+            else
+              echo "has_new=false"
+            fi
+          } >> "$GITHUB_OUTPUT"
+
+          echo "Latest semver tag: $LATEST_TAG"
+          echo "Unbuilt tags:"
+          echo "$NEW_TAGS" | sed 's/^/  - /'
+
       - name: Set up QEMU
-        if: steps.poll.outputs.new_release == 'true'
+        if: steps.poll.outputs.has_new == 'true'
         uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
-        if: steps.poll.outputs.new_release == 'true'
+        if: steps.poll.outputs.has_new == 'true'
         uses: docker/setup-buildx-action@v3
 
       - name: Log in to GHCR
-        if: steps.poll.outputs.new_release == 'true'
+        if: steps.poll.outputs.has_new == 'true'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -87,7 +94,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Login to Docker Hub
-        if: steps.poll.outputs.new_release == 'true'
+        if: steps.poll.outputs.has_new == 'true'
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -96,33 +103,78 @@ jobs:
       # My username, Ardakilic has a capital "A"
       # This is needed to set the lowercase owner name for the image, enforced by Docker
       - name: Set lowercase owner name
-        if: steps.poll.outputs.new_release == 'true'
+        if: steps.poll.outputs.has_new == 'true'
         run: |
           echo "OWNER_LC=$(echo $OWNER | tr '[:upper:]' '[:lower:]')" >> ${GITHUB_ENV}
         env:
           OWNER: '${{ github.repository_owner }}'
 
-      - name: Build and push Docker images
-        if: steps.poll.outputs.new_release == 'true'
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
-          build-args: |
-            IMAGE_NAME=${{ env.IMAGE_NAME }}
-          tags: |
-            ghcr.io/${{ env.OWNER_LC }}/${{ env.IMAGE_NAME }}:${{ steps.poll.outputs.release_tag }}
-            ghcr.io/${{ env.OWNER_LC }}/${{ env.IMAGE_NAME }}:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ steps.poll.outputs.release_tag }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
-
-      # This should be the last step, in case docker build and push fails this should not run
-      - name: Save changes to repository
-        if: steps.poll.outputs.new_release == 'true'
+      - name: Build and push each unbuilt release (oldest first)
+        if: steps.poll.outputs.has_new == 'true'
+        id: build
+        env:
+          NEW_TAGS: ${{ steps.poll.outputs.new_tags }}
+          LATEST_TAG: ${{ steps.poll.outputs.latest_tag }}
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@users.noreply.github.com"
-          git add .last_seen_release sox_ng
-          git commit -m "Update sox_ng submodule to ${{ steps.poll.outputs.release_tag }}"
+          set -uo pipefail
+          GHCR_IMG="ghcr.io/${OWNER_LC}/${IMAGE_NAME}"
+          HUB_IMG="${{ secrets.DOCKERHUB_USERNAME }}/${IMAGE_NAME}"
+          FAILED=()
+
+          while IFS= read -r TAG; do
+            [ -z "$TAG" ] && continue
+            echo "::group::Build $TAG"
+            git -C sox_ng checkout "$TAG"
+
+            EXTRA_TAGS=()
+            if [ "$TAG" = "$LATEST_TAG" ]; then
+              EXTRA_TAGS=(-t "${GHCR_IMG}:latest" -t "${HUB_IMG}:latest")
+            fi
+
+            if docker buildx build \
+                --platform linux/amd64,linux/arm64,linux/arm/v7 \
+                --build-arg IMAGE_NAME="${IMAGE_NAME}" \
+                -t "${GHCR_IMG}:${TAG}" \
+                -t "${HUB_IMG}:${TAG}" \
+                "${EXTRA_TAGS[@]}" \
+                --push \
+                .; then
+              echo "$TAG" >> .built_releases
+              echo "Built and pushed $TAG"
+            else
+              echo "::error::Failed to build $TAG"
+              FAILED+=("$TAG")
+            fi
+            echo "::endgroup::"
+          done <<< "$NEW_TAGS"
+
+          # Point the committed submodule pointer at the :latest tag.
+          if grep -qx "$LATEST_TAG" .built_releases; then
+            git -C sox_ng checkout "$LATEST_TAG"
+          fi
+
+          if [ ${#FAILED[@]} -gt 0 ]; then
+            echo "Failed tags: ${FAILED[*]}"
+            exit 1
+          fi
+
+      # This step runs even on partial failures so successful builds are recorded.
+      # A non-zero exit from the build step marks the run as failed, triggering
+      # a notification; the next cron tick will retry any unrecorded tags.
+      - name: Commit successful builds
+        if: always() && steps.poll.outputs.has_new == 'true'
+        run: |
+          set -euo pipefail
+          if git diff --quiet .built_releases sox_ng; then
+            echo "No state changes to commit."
+            exit 0
+          fi
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .built_releases sox_ng
+          ADDED=$(git diff --cached .built_releases | grep '^+sox_ng-' | sed 's/^+//' | tr '\n' ' ')
+          git commit -m "Build sox_ng release(s): ${ADDED}"
+          # Tolerate a concurrent push (e.g. Renovate) landing between our
+          # checkout and this push.
+          git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
           git push
