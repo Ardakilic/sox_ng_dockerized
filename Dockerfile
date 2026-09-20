@@ -47,8 +47,12 @@ WORKDIR /source
 COPY sox_ng .
 
 # Build sox_ng
+# BEFORE (fails on GCC14/trixie for old tags 14.5.4/14.6.3 missing unistd.h):
+#   ./configure --with-ffmpeg
+# AFTER (workaround, no-op on clean 14.8.1; revert to BEFORE if upstream backports unistd.h fix):
+#   CFLAGS="-g -O2 -Wno-error=implicit-function-declaration" ./configure --with-ffmpeg
 RUN autoreconf -i \
-    && ./configure --with-ffmpeg \
+    && CFLAGS="-g -O2 -Wno-error=implicit-function-declaration" ./configure --with-ffmpeg \
     && make \
     && make install DESTDIR=/install
 
